@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stockpulse-reddit-ingestor"
+version = "0.1.0"
+description = "Fetch Reddit posts with PRAW and store them in PostgreSQL."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "praw",
+  "psycopg[binary]",
+  "python-dotenv",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+reddit_ingestor = ["data/*.txt", "data/*.csv"]

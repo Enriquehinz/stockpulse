@@ -30,6 +30,7 @@ pip install -e .
 REDDIT_CLIENT_ID=
 REDDIT_CLIENT_SECRET=
 REDDIT_USER_AGENT=stockpulse-reddit-ingestor/0.1.0
+REDDIT_COMMENT_LIMIT=20
 
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
@@ -73,3 +74,48 @@ The app stores ticker data in:
 - `post_tickers`
 
 Duplicate ticker symbols and duplicate post-ticker relations are ignored at the database level.
+
+## Post Snapshots
+
+The app also stores post engagement snapshots in:
+
+- `post_snapshots`
+
+Supported snapshot types are `1h`, `3h`, and `24h`.
+
+Each run checks stored posts, determines which snapshots are due from `created_at`, fetches the latest post state from Reddit, and stores missing snapshots without creating duplicates for the same `post_id` and `snapshot_type`.
+
+## Comments
+
+Each run also fetches top-level comments for stored posts, limited by `REDDIT_COMMENT_LIMIT` per post.
+
+The app stores comment data in:
+
+- `comments`
+- `comment_ticker_mentions`
+
+Comment ticker detection reuses the same local ticker catalog and cleaning rules as post ticker extraction. Each comment stores unique ticker symbols plus `mention_count`, and duplicate comments and duplicate comment-ticker rows are ignored at the database level.
+
+## Market Data
+
+The app also evaluates stored `post_tickers` against market prices using `yfinance`.
+
+It stores raw market checkpoints in:
+
+- `market_price_points`
+
+And derived post-ticker outcomes in:
+
+- `signal_outcomes`
+
+Tracked checkpoints are:
+
+- `entry_0h`
+- `entry_1h`
+- `entry_3h`
+- `entry_6h`
+- `price_7d`
+- `price_30d`
+- `price_90d`
+
+The same checkpoints are also fetched for `SPY`. The app uses the nearest available market price at or after each target timestamp, skips unavailable or invalid tickers safely, and upserts outcomes so later runs can fill in longer horizons as they become available.

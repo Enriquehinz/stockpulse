@@ -22,6 +22,7 @@ class Settings:
     database_url: str | None
     subreddits: tuple[str, ...] = SUBREDDITS
     reddit_post_limit: int = 25
+    reddit_comment_limit: int = 20
 
     @property
     def resolved_database_url(self) -> str:
@@ -49,6 +50,7 @@ def load_settings() -> Settings:
         postgres_password=os.getenv("POSTGRES_PASSWORD", "postgres"),
         database_url=os.getenv("DATABASE_URL"),
         reddit_post_limit=int(os.getenv("REDDIT_POST_LIMIT", "25")),
+        reddit_comment_limit=int(os.getenv("REDDIT_COMMENT_LIMIT", "20")),
     )
 
 

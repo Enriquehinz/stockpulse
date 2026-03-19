@@ -12,6 +12,7 @@ dependencies = [
   "praw",
   "psycopg[binary]",
   "python-dotenv",
+  "yfinance",
 ]
 
 [tool.setuptools]
